@@ -1,1 +1,24 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #111;
+}
 
+.toolbar {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+canvas {
+    background: white;
+    display: block;
+}
