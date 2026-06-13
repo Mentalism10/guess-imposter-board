@@ -1,13 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Guess The Imposter Board</title>
+    <title>Guess Imposter Board</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="toolbar">
-    <button id="clearBtn">🗑 Clear</button>
+
+    <button id="clear">🗑 Clear</button>
+
+    <button class="color" data-color="black">⚫</button>
+    <button class="color" data-color="red">🔴</button>
+    <button class="color" data-color="blue">🔵</button>
+    <button class="color" data-color="green">🟢</button>
+    <button class="color" data-color="yellow">🟡</button>
+
+    <button id="eraser">🧽 Eraser</button>
+
+    <select id="size">
+        <option value="2">Small</option>
+        <option value="5" selected>Medium</option>
+        <option value="10">Large</option>
+        <option value="20">XL</option>
+    </select>
+
 </div>
 
 <canvas id="board"></canvas>
