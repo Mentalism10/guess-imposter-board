@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Guess Imposter Board</title>
+    <title>Guess The Imposter</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<div class="topbar">
+
+    <div id="roomInfo">
+        Room: Loading...
+    </div>
+
+    <div id="playerInfo">
+        Player: Loading...
+    </div>
+
+</div>
 
 <div class="toolbar">
 
@@ -14,16 +26,8 @@
     <button class="color" data-color="red">🔴</button>
     <button class="color" data-color="blue">🔵</button>
     <button class="color" data-color="green">🟢</button>
-    <button class="color" data-color="yellow">🟡</button>
 
     <button id="eraser">🧽 Eraser</button>
-
-    <select id="size">
-        <option value="2">Small</option>
-        <option value="5" selected>Medium</option>
-        <option value="10">Large</option>
-        <option value="20">XL</option>
-    </select>
 
 </div>
 
