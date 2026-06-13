@@ -5,6 +5,8 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let drawing = false;
+let currentColor = "black";
+let currentSize = 5;
 
 canvas.addEventListener("mousedown", () => {
     drawing = true;
@@ -23,7 +25,8 @@ function draw(e) {
     const x = e.clientX;
     const y = e.clientY;
 
-    ctx.lineWidth = 5;
+    ctx.lineWidth = currentSize;
+    ctx.strokeStyle = currentColor;
     ctx.lineCap = "round";
 
     ctx.lineTo(x, y);
@@ -94,3 +97,17 @@ setInterval(syncBoard, 500);
 document
 .getElementById("clear")
 .addEventListener("click", clearBoard);
+
+document.querySelectorAll(".color").forEach(btn => {
+    btn.addEventListener("click", () => {
+        currentColor = btn.dataset.color;
+    });
+});
+
+document.getElementById("size").addEventListener("change", e => {
+    currentSize = Number(e.target.value);
+});
+
+document.getElementById("eraser").addEventListener("click", () => {
+    currentColor = "#f0f0f0";
+});
