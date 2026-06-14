@@ -176,24 +176,4 @@ document
 
 });
 
-document
-.getElementById("clear")
-.addEventListener("click", async () => {
-
-    await fetch(
-        `${DB_URL}/rooms/${ROOM_ID}/drawings.json`,
-        {
-            method: "DELETE"
-        }
-    );
-
-    loadedKeys.clear();
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-});
+<button id="clear">🗑 Clear</button>
