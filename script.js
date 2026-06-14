@@ -32,6 +32,7 @@ let currentColor = "black";
 let canDraw = false;
 
 let loadedKeys = new Set();
+let isHost = PLAYER_NAME === "Ram";
 
 async function registerPlayer() {
 
@@ -150,7 +151,16 @@ async function syncBoard() {
         const data =
         await response.json();
 
-        if (!data) return;
+        if (!data) {
+            loadedKeys.clear();
+            ctx.clearRect(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+            return;
+        }
 
         Object.entries(data).forEach(
         ([key, point]) => {
@@ -270,8 +280,7 @@ async () => {
         game.currentTurn + 1;
 
         if (
-            nextTurn >=
-            playerList.length
+            nextTurn >= playerList.length
         ) {
 
             nextTurn = 0;
@@ -279,17 +288,33 @@ async () => {
         }
 
         await fetch(
-            `${DB_URL}/rooms/${ROOM_ID}/game/currentTurn.json`,
+            `${DB_URL}/rooms/${ROOM_ID}/drawings.json`,
             {
-                method: "PUT",
+                method: "DELETE"
+            }
+        );
+
+        loadedKeys.clear();
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/game.json`,
+            {
+                method: "PATCH",
                 headers: {
                     "Content-Type":
                     "application/json"
                 },
-                body:
-                JSON.stringify(
-                    nextTurn
-                )
+                body: JSON.stringify({
+                    currentTurn: nextTurn,
+                    timeLeft: 20
+                })
             }
         );
 
