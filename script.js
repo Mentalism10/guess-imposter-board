@@ -55,8 +55,9 @@ function draw(e){
 
     if(!drawing) return;
 
-    const x = e.clientX;
-    const y = e.clientY;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
     ctx.strokeStyle = currentColor;
     ctx.lineWidth = 5;
