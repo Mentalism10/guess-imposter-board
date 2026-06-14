@@ -4,6 +4,17 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+let canDraw = true;
+
+const turnPlayer =
+document.getElementById("turnPlayer");
+
+const timerText =
+document.getElementById("timer");
+
+const finishTurn =
+document.getElementById("finishTurn");
+
 const DB_URL =
 "https://guess-the-imposter-8bac0-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -97,7 +108,7 @@ canvas.addEventListener("mouseleave", () => {
 
 canvas.addEventListener("mousemove", (e) => {
 
-    if (!drawing) return;
+    if (!drawing || !canDraw) return;
 
     const rect = canvas.getBoundingClientRect();
 
@@ -203,3 +214,20 @@ document
     currentColor = "#f0f0f0";
 
 });
+
+turnPlayer.innerText =
+`Current Turn: ${PLAYER_NAME}`;
+
+timerText.innerText =
+`Time Left: 20s`;
+
+finishTurn.addEventListener(
+    "click",
+    () => {
+
+        alert(
+            "Turn system not connected yet."
+        );
+
+    }
+);
