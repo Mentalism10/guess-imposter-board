@@ -23,6 +23,11 @@ let currentColor = "black";
 
 let loadedKeys = new Set();
 
+let players = [];
+let currentTurn = 0;
+let round = 1;
+let timeLeft = 20;
+
 async function registerPlayer() {
 
     await fetch(
@@ -38,7 +43,30 @@ async function registerPlayer() {
 
 }
 
+async function initializeGame() {
+
+    try {
+
+        const response = await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/players.json`
+        );
+
+        const data = await response.json();
+
+        if (!data) return;
+
+        players = Object.keys(data);
+
+    } catch (err) {
+
+        console.log(err);
+
+    }
+
+}
+
 registerPlayer();
+initializeGame();
 
 canvas.addEventListener("mousedown", (e) => {
 
@@ -175,5 +203,3 @@ document
     currentColor = "#f0f0f0";
 
 });
-
-<button id="clear">🗑 Clear</button>
