@@ -6,40 +6,65 @@
 </head>
 <body>
 
-<div class="topbar">
+    <div class="topbar">
 
-    <div id="roomInfo">
-        Room: Loading...
+        <div id="roomInfo">
+            Room: Loading...
+        </div>
+
+        <div id="playerInfo">
+            Player: Loading...
+        </div>
+
     </div>
 
-    <div id="playerInfo">
-        Player: Loading...
+    <div id="gamePanel">
+
+        <h3 id="turnPlayer">
+            Current Turn: Waiting...
+        </h3>
+
+        <h3 id="timer">
+            Time Left: 20s
+        </h3>
+
+        <button id="finishTurn">
+            ✅ Finish Turn
+        </button>
+
     </div>
 
-</div>
+    <div class="toolbar">
 
-<div id="gamePanel">
-    <h3 id="turnPlayer">Current Turn: Waiting...</h3>
-    <h3 id="timer">Time Left: 20s</h3>
-    <button id="finishTurn">✅ Finish Turn</button>
-</div>
+        <button class="color" data-color="black">
+            ⚫
+        </button>
 
-<div class="toolbar">
+        <button class="color" data-color="red">
+            🔴
+        </button>
 
-    <button id="clear">🗑 Clear</button>
+        <button class="color" data-color="blue">
+            🔵
+        </button>
 
-    <button class="color" data-color="black">⚫</button>
-    <button class="color" data-color="red">🔴</button>
-    <button class="color" data-color="blue">🔵</button>
-    <button class="color" data-color="green">🟢</button>
+        <button class="color" data-color="green">
+            🟢
+        </button>
 
-    <button id="eraser">🧽 Eraser</button>
+        <button class="color" data-color="yellow">
+            🟡
+        </button>
 
-</div>
+        <button id="eraser">
+            🧽 Eraser
+        </button>
 
-<canvas id="board"></canvas>
+    </div>
 
-<script src="script.js"></script>
+    <canvas id="board"></canvas>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
