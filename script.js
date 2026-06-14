@@ -13,20 +13,15 @@ const ROOM_ID = params.get("room") || "TEST123";
 const PLAYER_NAME = params.get("player") || "Guest";
 
 document.getElementById("roomInfo").innerText =
-"Room: " + ROOM_ID;
+`Room: ${ROOM_ID}`;
 
 document.getElementById("playerInfo").innerText =
-"Player: " + PLAYER_NAME;
+`Player: ${PLAYER_NAME}`;
 
 let drawing = false;
 let currentColor = "black";
 
-let lastX = 0;
-let lastY = 0;
-
-let loadedLines = {};
-
-registerPlayer();
+let loadedKeys = new Set();
 
 async function registerPlayer() {
 
@@ -43,14 +38,20 @@ async function registerPlayer() {
 
 }
 
+registerPlayer();
+
 canvas.addEventListener("mousedown", (e) => {
 
     drawing = true;
 
     const rect = canvas.getBoundingClientRect();
 
-    lastX = e.clientX - rect.left;
-    lastY = e.clientY - rect.top;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    drawDot(x, y, currentColor);
+
+    pushPoint(x, y, currentColor);
 
 });
 
@@ -66,9 +67,7 @@ canvas.addEventListener("mouseleave", () => {
 
 });
 
-canvas.addEventListener("mousemove", draw);
-
-async function draw(e) {
+canvas.addEventListener("mousemove", (e) => {
 
     if (!drawing) return;
 
@@ -77,51 +76,33 @@ async function draw(e) {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    drawLine(
-        lastX,
-        lastY,
-        x,
-        y,
-        currentColor
-    );
+    drawDot(x, y, currentColor);
 
-    await pushLine(
-        lastX,
-        lastY,
-        x,
-        y,
-        currentColor
-    );
+    pushPoint(x, y, currentColor);
 
-    lastX = x;
-    lastY = y;
+});
 
-}
+function drawDot(x, y, color) {
 
-function drawLine(x1, y1, x2, y2, color) {
+    ctx.fillStyle = color;
 
     ctx.beginPath();
 
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 5;
-    ctx.lineCap = "round";
+    ctx.arc(
+        x,
+        y,
+        3,
+        0,
+        Math.PI * 2
+    );
 
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-
-    ctx.stroke();
+    ctx.fill();
 
 }
 
-async function pushLine(
-    x1,
-    y1,
-    x2,
-    y2,
-    color
-) {
+async function pushPoint(x, y, color) {
 
-    await fetch(
+    fetch(
         `${DB_URL}/rooms/${ROOM_ID}/drawings.json`,
         {
             method: "POST",
@@ -129,10 +110,8 @@ async function pushLine(
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                x1,
-                y1,
-                x2,
-                y2,
+                x,
+                y,
                 color
             })
         }
@@ -152,20 +131,16 @@ async function syncBoard() {
 
         if (!data) return;
 
-        Object.keys(data).forEach(key => {
+        Object.entries(data).forEach(([key, point]) => {
 
-            if (loadedLines[key]) return;
+            if (loadedKeys.has(key)) return;
 
-            loadedLines[key] = true;
+            loadedKeys.add(key);
 
-            const line = data[key];
-
-            drawLine(
-                line.x1,
-                line.y1,
-                line.x2,
-                line.y2,
-                line.color
+            drawDot(
+                point.x,
+                point.y,
+                point.color
             );
 
         });
@@ -178,7 +153,7 @@ async function syncBoard() {
 
 }
 
-setInterval(syncBoard, 200);
+setInterval(syncBoard, 300);
 
 document
 .querySelectorAll(".color")
@@ -205,20 +180,20 @@ document
 .getElementById("clear")
 .addEventListener("click", async () => {
 
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    loadedLines = {};
-
     await fetch(
         `${DB_URL}/rooms/${ROOM_ID}/drawings.json`,
         {
             method: "DELETE"
         }
+    );
+
+    loadedKeys.clear();
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
     );
 
 });
