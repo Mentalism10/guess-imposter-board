@@ -44,3 +44,17 @@ canvas{
 button{
     margin:2px;
 }
+#gamePanel{
+    position:fixed;
+    top:80px;
+    left:10px;
+    z-index:100;
+    background:white;
+    padding:10px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+#gamePanel h3{
+    margin:5px 0;
+}
