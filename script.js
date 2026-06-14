@@ -364,5 +364,11 @@ setInterval(
     1000
 );
 
+setInterval(
+    tickTimer,
+    1000
+);
+
 syncBoard();
 syncGame();
+tickTimer();
