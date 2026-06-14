@@ -2,11 +2,13 @@ body{
     margin:0;
     overflow:hidden;
     background:#f0f0f0;
+    font-family:Arial, sans-serif;
 }
 
 .topbar{
     position:fixed;
     top:0;
+    left:0;
     width:100%;
     height:50px;
 
@@ -34,27 +36,62 @@ body{
     box-shadow:0 0 10px rgba(0,0,0,.2);
 
     z-index:1000;
+
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+}
+
+#gamePanel{
+    position:fixed;
+
+    top:150px;
+    left:10px;
+
+    z-index:1000;
+
+    background:white;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    box-shadow:0 0 10px rgba(0,0,0,.2);
+
+    min-width:220px;
+}
+
+#gamePanel h3{
+    margin:6px 0;
+    font-size:16px;
+}
+
+#finishTurn{
+    width:100%;
+    padding:8px;
+    margin-top:8px;
+    cursor:pointer;
 }
 
 canvas{
-    margin-top:50px;
     display:block;
+    margin-top:50px;
+    background:#f0f0f0;
 }
 
 button{
     margin:2px;
-}
-#gamePanel{
-    position:fixed;
-    top:80px;
-    left:10px;
-    z-index:100;
-    background:white;
-    padding:10px;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,.2);
+    padding:6px 10px;
+    cursor:pointer;
 }
 
-#gamePanel h3{
-    margin:5px 0;
+.color{
+    width:40px;
+    height:40px;
+    font-size:18px;
+}
+
+#roomInfo,
+#playerInfo{
+    font-weight:bold;
 }
