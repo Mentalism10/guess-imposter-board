@@ -191,6 +191,93 @@ async function syncBoard() {
 
 async function syncGame() {
 
+    async function tickTimer() {
+
+    if (!isHost) return;
+
+    try {
+
+        const response = await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/game.json`
+        );
+
+        const game = await response.json();
+
+        if (!game) return;
+
+        let newTime = game.timeLeft - 1;
+
+        if (newTime < 0) {
+
+            const playersResponse =
+            await fetch(
+                `${DB_URL}/rooms/${ROOM_ID}/players.json`
+            );
+
+            const playersData =
+            await playersResponse.json();
+
+            const playerList =
+            Object.keys(playersData);
+
+            let nextTurn =
+            game.currentTurn + 1;
+
+            if (
+                nextTurn >= playerList.length
+            ) {
+                nextTurn = 0;
+            }
+
+            await fetch(
+                `${DB_URL}/rooms/${ROOM_ID}/drawings.json`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+            await fetch(
+                `${DB_URL}/rooms/${ROOM_ID}/game.json`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type":
+                        "application/json"
+                    },
+                    body: JSON.stringify({
+                        currentTurn: nextTurn,
+                        timeLeft: 20
+                    })
+                }
+            );
+
+            return;
+        }
+
+        await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/game/timeLeft.json`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
+                body: JSON.stringify(
+                    newTime
+                )
+            }
+        );
+
+    }
+
+    catch(err) {
+
+        console.log(err);
+
+    }
+
+}
+
     try {
 
         const gameResponse =
