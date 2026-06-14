@@ -4,17 +4,6 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let canDraw = true;
-
-const turnPlayer =
-document.getElementById("turnPlayer");
-
-const timerText =
-document.getElementById("timer");
-
-const finishTurn =
-document.getElementById("finishTurn");
-
 const DB_URL =
 "https://guess-the-imposter-8bac0-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -29,15 +18,20 @@ document.getElementById("roomInfo").innerText =
 document.getElementById("playerInfo").innerText =
 `Player: ${PLAYER_NAME}`;
 
+const turnPlayer =
+document.getElementById("turnPlayer");
+
+const timerText =
+document.getElementById("timer");
+
+const finishTurn =
+document.getElementById("finishTurn");
+
 let drawing = false;
 let currentColor = "black";
+let canDraw = false;
 
 let loadedKeys = new Set();
-
-let players = [];
-let currentTurn = 0;
-let round = 1;
-let timeLeft = 20;
 
 async function registerPlayer() {
 
@@ -54,39 +48,22 @@ async function registerPlayer() {
 
 }
 
-async function initializeGame() {
-
-    try {
-
-        const response = await fetch(
-            `${DB_URL}/rooms/${ROOM_ID}/players.json`
-        );
-
-        const data = await response.json();
-
-        if (!data) return;
-
-        players = Object.keys(data);
-
-    } catch (err) {
-
-        console.log(err);
-
-    }
-
-}
-
 registerPlayer();
-initializeGame();
 
 canvas.addEventListener("mousedown", (e) => {
 
+    if (!canDraw) return;
+
     drawing = true;
 
-    const rect = canvas.getBoundingClientRect();
+    const rect =
+    canvas.getBoundingClientRect();
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x =
+    e.clientX - rect.left;
+
+    const y =
+    e.clientY - rect.top;
 
     drawDot(x, y, currentColor);
 
@@ -110,10 +87,14 @@ canvas.addEventListener("mousemove", (e) => {
 
     if (!drawing || !canDraw) return;
 
-    const rect = canvas.getBoundingClientRect();
+    const rect =
+    canvas.getBoundingClientRect();
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const x =
+    e.clientX - rect.left;
+
+    const y =
+    e.clientY - rect.top;
 
     drawDot(x, y, currentColor);
 
@@ -166,13 +147,17 @@ async function syncBoard() {
             `${DB_URL}/rooms/${ROOM_ID}/drawings.json`
         );
 
-        const data = await response.json();
+        const data =
+        await response.json();
 
         if (!data) return;
 
-        Object.entries(data).forEach(([key, point]) => {
+        Object.entries(data).forEach(
+        ([key, point]) => {
 
-            if (loadedKeys.has(key)) return;
+            if (
+                loadedKeys.has(key)
+            ) return;
 
             loadedKeys.add(key);
 
@@ -184,7 +169,9 @@ async function syncBoard() {
 
         });
 
-    } catch (err) {
+    }
+
+    catch(err) {
 
         console.log(err);
 
@@ -192,13 +179,137 @@ async function syncBoard() {
 
 }
 
-setInterval(syncBoard, 300);
+async function syncGame() {
+
+    try {
+
+        const gameResponse =
+        await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/game.json`
+        );
+
+        const game =
+        await gameResponse.json();
+
+        if (!game) return;
+
+        const playersResponse =
+        await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/players.json`
+        );
+
+        const playersData =
+        await playersResponse.json();
+
+        if (!playersData) return;
+
+        const playerList =
+        Object.keys(playersData);
+
+        if (
+            playerList.length === 0
+        ) return;
+
+        const currentPlayer =
+        playerList[
+            game.currentTurn
+        ];
+
+        turnPlayer.innerText =
+        "Current Turn: " +
+        currentPlayer;
+
+        timerText.innerText =
+        "Time Left: " +
+        game.timeLeft +
+        "s";
+
+        canDraw =
+        currentPlayer ===
+        PLAYER_NAME;
+
+        finishTurn.disabled =
+        !canDraw;
+
+    }
+
+    catch(err) {
+
+        console.log(err);
+
+    }
+
+}
+
+finishTurn.addEventListener(
+"click",
+async () => {
+
+    try {
+
+        const playersResponse =
+        await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/players.json`
+        );
+
+        const playersData =
+        await playersResponse.json();
+
+        const playerList =
+        Object.keys(playersData);
+
+        const gameResponse =
+        await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/game.json`
+        );
+
+        const game =
+        await gameResponse.json();
+
+        let nextTurn =
+        game.currentTurn + 1;
+
+        if (
+            nextTurn >=
+            playerList.length
+        ) {
+
+            nextTurn = 0;
+
+        }
+
+        await fetch(
+            `${DB_URL}/rooms/${ROOM_ID}/game/currentTurn.json`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
+                body:
+                JSON.stringify(
+                    nextTurn
+                )
+            }
+        );
+
+    }
+
+    catch(err) {
+
+        console.log(err);
+
+    }
+
+});
 
 document
 .querySelectorAll(".color")
 .forEach(btn => {
 
-    btn.addEventListener("click", () => {
+    btn.addEventListener(
+    "click",
+    () => {
 
         currentColor =
         btn.dataset.color;
@@ -209,25 +320,24 @@ document
 
 document
 .getElementById("eraser")
-.addEventListener("click", () => {
+.addEventListener(
+"click",
+() => {
 
-    currentColor = "#f0f0f0";
+    currentColor =
+    "#f0f0f0";
 
 });
 
-turnPlayer.innerText =
-`Current Turn: ${PLAYER_NAME}`;
-
-timerText.innerText =
-`Time Left: 20s`;
-
-finishTurn.addEventListener(
-    "click",
-    () => {
-
-        alert(
-            "Turn system not connected yet."
-        );
-
-    }
+setInterval(
+    syncBoard,
+    300
 );
+
+setInterval(
+    syncGame,
+    1000
+);
+
+syncBoard();
+syncGame();
